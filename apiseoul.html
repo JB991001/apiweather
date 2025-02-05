@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>서울 현재 정보</title>
+    <style>
+        *{padding: 0; margin: 0;
+        color : rgb(3,3,3);}
+        ul{list-style: none;} a{text-decoration: none;}
+        li{list-style: none;}
+        
+        .outBox{
+            margin : 40px auto;
+            width : 1400px;
+            height: 700px;
+            background-color: rgba(245,245,245,0.7);
+        }
+        h1{
+            width : 300px;
+            margin : 50px auto;
+        }
+        #cloBox{
+            margin : 100px;
+            display: flex;
+            justify-content: space-between;
+        }
+        #clock{
+            width  : 200px;
+            font-size: 40px;
+        }
+        #dat{
+            width : 200px;
+            font-size: 40px;
+        }
+        #iconDiv{
+            width : 200px;
+            height: 200px;
+            font-size: 200px;
+            margin : 40px auto;
+        }
+        #temp{
+            width : 1400px;
+            height : 300px;
+            display: flex;
+        }
+        #high{
+            width : 300px;
+            font-size: 35px;
+            color : orangered;
+            margin : 40px 200px;
+        }
+        #low{
+            width : 300px;
+            font-size: 35px;
+            color : lightskyblue;
+            margin : 40px 150px;
+        }
+        #place{
+            margin : -80px auto;
+            width : 1400px;
+            height : 50px;
+            display: flex;
+            justify-content: space-around;
+        }
+        #seoul{
+            background-color: palegreen;
+            width : 150px;
+            height: 80px;
+            border-radius: 10px 10px 10px 10px;
+            font-size: 30px;
+            font-weight: bold;
+            line-height: 80px;
+            text-align: center;
+            cursor: pointer;
+        }
+        #busan{
+            background-color: paleturquoise;
+            width : 150px;
+            height: 80px;
+            border-radius: 10px 10px 10px 10px;
+            font-size: 30px;
+            font-weight: bold;
+            line-height: 80px;
+            text-align: center;
+            cursor: pointer;
+        }
+        #jeju{
+            background-color: palevioletred;
+            width : 150px;
+            height: 80px;
+            border-radius: 10px 10px 10px 10px;
+            font-size: 30px;
+            font-weight: bold;
+            line-height: 80px;
+            text-align: center;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="outBox">
+    <h1>서울 현재 시각, 날씨</h1>
+    <div id="cloBox">
+    <div id="clock"></div>
+    <div id="dat"></div>
+    </div>
+    <div id= "wea">
+        <div id = "iconDiv"></div>
+        <div id = "temp">
+            <div id = "high"></div>
+            <div id = "low"></div>
+        </div>
+    </div>
+        <div id = "place">
+            <div id = "seoul">서울</div>
+            <div id = "busan">부산</div>
+            <div id = "jeju">제주</div>
+        </div>
+    </div>
+    <script>
+
+        // 시계
+
+            let clock = document.querySelector("#clock");
+            let now = new Date();
+            let pre = "";
+            let ho = now.getHours()
+            let mi = now.getMinutes();
+            if(now.getHours() >= 12){
+                pre = "pm"
+                ho = ho % 12
+            }else{
+                pre = "am"
+            }
+
+            let hostr = String(ho).padStart(2, "0")
+            let mistr = String(mi).padStart(2, "0")
+            clock.innerHTML = `${hostr} : ${mistr} ${pre}`;
+
+        // 날짜
+
+            let dat = document.querySelector("#dat");
+            let date = new Date();
+            let day = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + (date.getDate()+7) 
+            dat.innerHTML = day;
+
+        // 날씨
+
+            let high = document.querySelector("#high");
+            let low  = document.querySelector("#low");
+            let iconDiv = document.querySelector("#iconDiv")
+
+            let key = "a796bfc95507eaa60eadf9bfdd83b79d"
+            let cityName = "Seoul"
+
+            let weather = async() => {
+                let response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${key}&units=metric`)
+                let data = await response.json()
+                console.log(data);
+                high.textContent = `최고기온 : ${data.main.temp_max}°C`
+                low.textContent = `최저기온 : ${data.main.temp_min}°C`
+                let icon = data.weather[0].main;
+                let weatherIcon = "";
+
+                switch(icon){
+                    case 'Clear':
+                        weatherIcon = "<span style='color: yellow;'>&#9728;</span>";
+                        break;
+                    case 'Wind':
+                        weatherIcon = "<span style='color: gray;'>&#127788;</span>";
+                        break;
+                    case 'Clouds':
+                        weatherIcon = "<span style='color: gray;'>&#9729;</span>";
+                        break;
+                    case 'Rain':
+                        weatherIcon = "<span style='color: blue;'>&#9748;</span>";
+                        break;
+                    case 'Snow':
+                        weatherIcon = "<span style='color: white;'>&#2603;</span>";
+                }
+                iconDiv.innerHTML = weatherIcon;
+            }
+            weather();
+
+    </script>
+</body>
+</html>
